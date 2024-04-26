@@ -14,11 +14,11 @@ torch.backends.cudnn.benchmark = True
 quantization_config = BitsAndBytesConfig(load_in_4bit=True)
 model = AutoModelForCausalLM.from_pretrained(model_name, cache_dir=cache_dir, quantization_config=quantization_config)
 
-def generate_response(input_text, max_length, min_length, no_repeat_ngram_size, num_beams, early_stopping, temperature, top_p):
+def generate_response(input_text, max_new_tokens, min_length, no_repeat_ngram_size, num_beams, early_stopping, temperature, top_p):
    input_ids = tokenizer(input_text, return_tensors="pt")
    outputs = model.generate(
        **input_ids,
-       max_length=max_length,
+       max_new_tokens=max_new_tokens,
        min_length=min_length,
        no_repeat_ngram_size=no_repeat_ngram_size,
        num_beams=num_beams,
@@ -30,8 +30,8 @@ def generate_response(input_text, max_length, min_length, no_repeat_ngram_size, 
    response = tokenizer.decode(outputs[0], skip_special_tokens=True)
    return response
 
-def chat(input_text, history, max_length, min_length, no_repeat_ngram_size, num_beams, early_stopping, temperature, top_p):
-   response = generate_response(input_text, max_length, min_length, no_repeat_ngram_size, num_beams, early_stopping, temperature, top_p)
+def chat(input_text, history, max_new_tokens, min_length, no_repeat_ngram_size, num_beams, early_stopping, temperature, top_p):
+   response = generate_response(input_text, max_new_tokens, min_length, no_repeat_ngram_size, num_beams, early_stopping, temperature, top_p)
    history.append((input_text, response))
    return history, history
 
@@ -48,7 +48,7 @@ with gr.Blocks() as demo:
    with gr.Accordion("Adjustments", open=False):
        with gr.Row():    
            with gr.Column():
-               max_length = gr.Slider(minimum=50, maximum=1500, value=300, step=10, label="Max Length")
+               max_new_tokens = gr.Slider(minimum=10, maximum=1500, value=100, step=10, label="Max New Tokens")
                min_length = gr.Slider(minimum=10, maximum=300, value=100, step=10, label="Min Length")
                no_repeat_ngram_size = gr.Slider(minimum=1, maximum=6, value=4, step=1, label="No Repeat N-Gram Size")
            with gr.Column():
@@ -57,6 +57,6 @@ with gr.Blocks() as demo:
                top_p = gr.Slider(minimum=0.1, maximum=1.0, value=0.7, step=0.1, label="Top P")
        early_stopping = gr.Checkbox(value=True, label="Early Stopping")
    
-   submit.click(chat, inputs=[message, chatbot, max_length, min_length, no_repeat_ngram_size, num_beams, early_stopping, temperature, top_p], outputs=[chatbot, chatbot])
+   submit.click(chat, inputs=[message, chatbot, max_new_tokens, min_length, no_repeat_ngram_size, num_beams, early_stopping, temperature, top_p], outputs=[chatbot, chatbot])
    
 demo.launch()
