@@ -39,7 +39,7 @@ def chat(input_text, history, max_new_tokens, min_length, no_repeat_ngram_size, 
    return history, history
 
 with gr.Blocks() as demo:
-   gr.Markdown("# Hebrew-Mistral-7B Chatbot", elem_id="title")
+   gr.Markdown("# Hebrew-Mistral-7B Instract-bot", elem_id="title")
    gr.Markdown("Model by Yam Peleg | GUI by Shmuel Ronen", elem_id="subtitle")
    
    chatbot = gr.Chatbot(elem_id="chatbot")
