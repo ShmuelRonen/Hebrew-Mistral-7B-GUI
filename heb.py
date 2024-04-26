@@ -63,7 +63,12 @@ with gr.Blocks() as demo:
    submit.click(chat, inputs=[message, chatbot, max_new_tokens, min_length, no_repeat_ngram_size, num_beams, early_stopping, temperature, top_p], outputs=[chatbot, chatbot])
    
    demo.css = """
-       #message, #message *, .label, #title, #subtitle {
+       #message, #message * {
+           text-align: right !important;
+           direction: rtl !important;
+       }
+       
+       .label, #title, #subtitle {
            text-align: right !important;
        }
    """
