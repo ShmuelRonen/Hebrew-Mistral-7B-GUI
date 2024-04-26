@@ -19,12 +19,10 @@ A user-friendly interface for interacting with the powerful Hebrew-Mistral-7B la
 git clone https://github.com/your-username/Hebrew-Mistral-7B-GUI.git
 cd Hebrew-Mistral-7B-GUI
 ```
-
-2. Run the:
 ```
 init_env.bat
 ```
-script to automatically set up the virtual environment and install the required dependencies.
+The script will automatically set up the virtual environment and install the required dependencies.
 
 ### Manual Installation
 
