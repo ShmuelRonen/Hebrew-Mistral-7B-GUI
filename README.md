@@ -6,7 +6,7 @@
 A user-friendly interface for interacting with the powerful Hebrew-Mistral-7B language model, allowing you to generate coherent and contextually relevant text in Hebrew with adjustable parameters for customized output.
 </p>
 
-![Yam Peleg](https://github.com/ShmuelRonen/Hebrew-Mistral-7B-GUI/assets/80190186/e5fb5ef8-e7c0-48c2-9354-01522d76a3d0)
+![Yam Peleg](https://github.com/ShmuelRonen/Hebrew-Mistral-7B-GUI/assets/80190186/ccaba480-d089-40ab-bbf7-b3f9aeea1207)
 
 
 
