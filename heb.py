@@ -11,11 +11,11 @@ tokenizer = AutoTokenizer.from_pretrained(model_name, cache_dir=cache_dir)
 
 torch.backends.cudnn.benchmark = True
 
-quantization_config = BitsAndBytesConfig(load_in_4bit=True)
+quantization_config = BitsAndBytesConfig(load_in_4bit=True, bnb_4bit_compute_dtype=torch.float16)
 model = AutoModelForCausalLM.from_pretrained(model_name, cache_dir=cache_dir, quantization_config=quantization_config)
 
 def generate_response(input_text, max_new_tokens, min_length, no_repeat_ngram_size, num_beams, early_stopping, temperature, top_p):
-   input_ids = tokenizer(input_text, return_tensors="pt")
+   input_ids = tokenizer(input_text, return_tensors="pt").to(model.device)
    outputs = model.generate(
        **input_ids,
        max_new_tokens=max_new_tokens,
@@ -25,24 +25,27 @@ def generate_response(input_text, max_new_tokens, min_length, no_repeat_ngram_si
        early_stopping=early_stopping,
        temperature=temperature,
        top_p=top_p,
-       pad_token_id=tokenizer.eos_token_id
+       pad_token_id=tokenizer.eos_token_id,
+       do_sample=True
    )
    response = tokenizer.decode(outputs[0], skip_special_tokens=True)
    return response
 
 def chat(input_text, history, max_new_tokens, min_length, no_repeat_ngram_size, num_beams, early_stopping, temperature, top_p):
+   user_input = f'<div style="text-align: right;">{input_text}</div>'
    response = generate_response(input_text, max_new_tokens, min_length, no_repeat_ngram_size, num_beams, early_stopping, temperature, top_p)
-   history.append((input_text, response))
+   bot_response = f'<div style="text-align: right;">{response}</div>'
+   history.append((user_input, bot_response))
    return history, history
 
 with gr.Blocks() as demo:
-   gr.Markdown("# Hebrew-Mistral-7B Chatbot")
-   gr.Markdown("Model by Yam Peleg | GUI by Shmuel Ronen")
+   gr.Markdown("# Hebrew-Mistral-7B Chatbot", elem_id="title")
+   gr.Markdown("Model by Yam Peleg | GUI by Shmuel Ronen", elem_id="subtitle")
    
-   chatbot = gr.Chatbot()
+   chatbot = gr.Chatbot(elem_id="chatbot")
    
    with gr.Row():
-       message = gr.Textbox(placeholder="Type your message...", label="User")
+       message = gr.Textbox(placeholder="Type your message...", label="User", elem_id="message")
        submit = gr.Button("Send")
 
    with gr.Accordion("Adjustments", open=False):
@@ -59,4 +62,10 @@ with gr.Blocks() as demo:
    
    submit.click(chat, inputs=[message, chatbot, max_new_tokens, min_length, no_repeat_ngram_size, num_beams, early_stopping, temperature, top_p], outputs=[chatbot, chatbot])
    
+   demo.css = """
+       #message, #message *, .label, #title, #subtitle {
+           text-align: right !important;
+       }
+   """
+
 demo.launch()
