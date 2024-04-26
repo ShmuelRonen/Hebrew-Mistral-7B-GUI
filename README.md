@@ -9,7 +9,7 @@ A user-friendly interface for interacting with the powerful Hebrew-Mistral-7B la
 ![RTL](https://github.com/ShmuelRonen/Hebrew-Mistral-7B-GUI/assets/80190186/901a8b0e-0ad1-4dd3-a9a2-a9e57b830deb)
 
 
-### update: now the GUI write text in RTL mode. please:
+#### update: now the GUI write text in RTL mode. please:
 ```
 git pull
 ```
