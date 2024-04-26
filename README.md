@@ -6,9 +6,13 @@
 A user-friendly interface for interacting with the powerful Hebrew-Mistral-7B language model, allowing you to generate coherent and contextually relevant text in Hebrew with adjustable parameters for customized output.
 </p>
 
-![Yam Peleg](https://github.com/ShmuelRonen/Hebrew-Mistral-7B-GUI/assets/80190186/ccaba480-d089-40ab-bbf7-b3f9aeea1207)
+![RTL](https://github.com/ShmuelRonen/Hebrew-Mistral-7B-GUI/assets/80190186/901a8b0e-0ad1-4dd3-a9a2-a9e57b830deb)
 
 
+### update: now the GUI write text in RTL mode. please:
+```
+git pull
+```
 
 ## Installation
 
