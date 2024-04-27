@@ -15,7 +15,7 @@ echo Installing requirements...
 pip install -i https://pypi.org/simple/ bitsandbytes
 pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
 pip install -r requirements.txt
-echo Requirements installed.
+echo Requirements installed!
 
 rem Run the Python script
 python heb.py
