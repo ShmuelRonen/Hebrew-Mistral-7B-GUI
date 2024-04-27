@@ -14,7 +14,7 @@ torch.backends.cudnn.benchmark = True
 quantization_config = BitsAndBytesConfig(load_in_4bit=True, bnb_4bit_compute_dtype=torch.float16)
 model = AutoModelForCausalLM.from_pretrained(model_name, cache_dir=cache_dir, quantization_config=quantization_config)
 
-def generate_response(input_text, max_new_tokens, min_length, no_repeat_ngram_size, num_beams, early_stopping, temperature, top_p):
+def generate_response(input_text, max_new_tokens, min_length, no_repeat_ngram_size, num_beams, early_stopping, temperature, top_p, top_k):
    input_ids = tokenizer(input_text, return_tensors="pt").to(model.device)
    outputs = model.generate(
        **input_ids,
@@ -25,15 +25,16 @@ def generate_response(input_text, max_new_tokens, min_length, no_repeat_ngram_si
        early_stopping=early_stopping,
        temperature=temperature,
        top_p=top_p,
+       top_k=top_k,
        pad_token_id=tokenizer.eos_token_id,
        do_sample=True
    )
    response = tokenizer.decode(outputs[0], skip_special_tokens=True)
    return response
 
-def chat(input_text, history, max_new_tokens, min_length, no_repeat_ngram_size, num_beams, early_stopping, temperature, top_p):
+def chat(input_text, history, max_new_tokens, min_length, no_repeat_ngram_size, num_beams, early_stopping, temperature, top_p, top_k):
    user_input = f'<div style="text-align: right; direction: rtl;">{input_text}</div>'
-   response = generate_response(input_text, max_new_tokens, min_length, no_repeat_ngram_size, num_beams, early_stopping, temperature, top_p)
+   response = generate_response(input_text, max_new_tokens, min_length, no_repeat_ngram_size, num_beams, early_stopping, temperature, top_p, top_k)
    bot_response = f'<div style="text-align: right; direction: rtl;">{response}</div>'
    history.append((user_input, bot_response))
    return history, history
@@ -58,9 +59,10 @@ with gr.Blocks() as demo:
                num_beams = gr.Slider(minimum=1, maximum=16, value=4, step=1, label="Num Beams") 
                temperature = gr.Slider(minimum=0.1, maximum=2.0, value=0.2, step=0.1, label="Temperature")
                top_p = gr.Slider(minimum=0.1, maximum=1.0, value=0.7, step=0.1, label="Top P")
+               top_k = gr.Slider(minimum=1, maximum=100, value=30, step=1, label="Top K")
        early_stopping = gr.Checkbox(value=True, label="Early Stopping")
    
-   submit.click(chat, inputs=[message, chatbot, max_new_tokens, min_length, no_repeat_ngram_size, num_beams, early_stopping, temperature, top_p], outputs=[chatbot, chatbot])
+   submit.click(chat, inputs=[message, chatbot, max_new_tokens, min_length, no_repeat_ngram_size, num_beams, early_stopping, temperature, top_p, top_k], outputs=[chatbot, chatbot])
    
    demo.css = """
        #message, #message * {
