@@ -32,9 +32,9 @@ def generate_response(input_text, max_new_tokens, min_length, no_repeat_ngram_si
    return response
 
 def chat(input_text, history, max_new_tokens, min_length, no_repeat_ngram_size, num_beams, early_stopping, temperature, top_p):
-   user_input = f'<div style="text-align: right;">{input_text}</div>'
+   user_input = f'<div style="text-align: right; direction: rtl;">{input_text}</div>'
    response = generate_response(input_text, max_new_tokens, min_length, no_repeat_ngram_size, num_beams, early_stopping, temperature, top_p)
-   bot_response = f'<div style="text-align: right;">{response}</div>'
+   bot_response = f'<div style="text-align: right; direction: rtl;">{response}</div>'
    history.append((user_input, bot_response))
    return history, history
 
@@ -68,8 +68,17 @@ with gr.Blocks() as demo:
            direction: rtl !important;
        }
        
-       .label, #title, #subtitle {
+       #chatbot, #chatbot * {
            text-align: right !important;
+           direction: rtl !important;
+       }
+       
+       #title, .label {
+           text-align: right !important;
+       }
+       
+       #subtitle {
+           text-align: left !important;
        }
    """
 
