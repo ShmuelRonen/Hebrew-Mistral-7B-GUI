@@ -2,6 +2,10 @@ import gradio as gr
 from transformers import AutoTokenizer, AutoModelForCausalLM, BitsAndBytesConfig
 import os
 import torch
+import nltk
+from nltk.tokenize import sent_tokenize
+
+nltk.download('punkt')
 
 model_name = "yam-peleg/Hebrew-Mistral-7B"
 cache_dir = "hebrew_mistral_cache"
@@ -32,12 +36,47 @@ def generate_response(input_text, max_new_tokens, min_length, no_repeat_ngram_si
    response = tokenizer.decode(outputs[0], skip_special_tokens=True)
    return response
 
-def chat(input_text, history, max_new_tokens, min_length, no_repeat_ngram_size, num_beams, early_stopping, temperature, top_p, top_k):
+def create_paragraphs(bot_response, sentences_per_paragraph=4):
+   sentences = sent_tokenize(bot_response)
+   paragraphs = []
+   current_paragraph = ""
+
+   for i, sentence in enumerate(sentences, start=1):
+       current_paragraph += " " + sentence
+       if i % sentences_per_paragraph == 0:
+           paragraphs.append(current_paragraph.strip())
+           current_paragraph = ""
+
+   if current_paragraph:
+       paragraphs.append(current_paragraph.strip())
+
+   formatted_paragraphs = "\n".join([f'<p style="text-align: right; direction: rtl;">{p}</p>' for p in paragraphs])
+   return formatted_paragraphs
+
+def remove_paragraphs(text):
+   return text.replace("\n", " ")
+
+def copy_last_response(history):
+    if history:
+        last_response = history[-1][1]
+        last_response = last_response.replace('<div style="text-align: right; direction: rtl;">', '').replace('</div>', '')
+        last_response = last_response.replace('<p style="text-align: right; direction: rtl;">', '').replace('</p>', '')
+        last_response = last_response.replace('\n', ' ')
+        return last_response
+    else:
+        return ""
+
+def chat(input_text, history, max_new_tokens, min_length, no_repeat_ngram_size, num_beams, early_stopping, temperature, top_p, top_k, create_paragraphs_enabled):
    user_input = f'<div style="text-align: right; direction: rtl;">{input_text}</div>'
    response = generate_response(input_text, max_new_tokens, min_length, no_repeat_ngram_size, num_beams, early_stopping, temperature, top_p, top_k)
+
+   if create_paragraphs_enabled:
+       response = create_paragraphs(response)
+
    bot_response = f'<div style="text-align: right; direction: rtl;">{response}</div>'
    history.append((user_input, bot_response))
-   return history, history
+
+   return history, history, input_text
 
 with gr.Blocks() as demo:
    gr.Markdown("# Hebrew-Mistral-7B Instract-bot", elem_id="title")
@@ -49,6 +88,11 @@ with gr.Blocks() as demo:
        message = gr.Textbox(placeholder="Type your message...", label="User", elem_id="message")
        submit = gr.Button("Send")
 
+   with gr.Row():
+       create_paragraphs_checkbox = gr.Checkbox(label="Create Paragraphs", value=False)
+       remove_paragraphs_btn = gr.Button("Remove Paragraphs")
+       copy_last_btn = gr.Button("Copy Last Response")
+   
    with gr.Accordion("Adjustments", open=False):
        with gr.Row():    
            with gr.Column():
@@ -62,7 +106,9 @@ with gr.Blocks() as demo:
                top_k = gr.Slider(minimum=1, maximum=100, value=30, step=1, label="Top K")
        early_stopping = gr.Checkbox(value=True, label="Early Stopping")
    
-   submit.click(chat, inputs=[message, chatbot, max_new_tokens, min_length, no_repeat_ngram_size, num_beams, early_stopping, temperature, top_p, top_k], outputs=[chatbot, chatbot])
+   submit.click(chat, inputs=[message, chatbot, max_new_tokens, min_length, no_repeat_ngram_size, num_beams, early_stopping, temperature, top_p, top_k, create_paragraphs_checkbox], outputs=[chatbot, chatbot, message])
+   remove_paragraphs_btn.click(remove_paragraphs, inputs=message, outputs=message)
+   copy_last_btn.click(copy_last_response, inputs=chatbot, outputs=message)
    
    demo.css = """
        #message, #message * {
