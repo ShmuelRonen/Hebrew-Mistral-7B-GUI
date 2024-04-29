@@ -8,8 +8,24 @@ A user-friendly interface for interacting with the powerful Hebrew-Mistral-7B la
 
 ![RTL](https://github.com/ShmuelRonen/Hebrew-Mistral-7B-GUI/assets/80190186/d2774e4f-ed20-4fb4-95dc-32000b217e3c)
 
+#### Update: Three Additional Functions
 
-#### update: now the GUI write text in RTL mode. please:
+The code includes three additional functions to enhance the user experience:
+
+1. **Create Paragraphs**: When enabled, this function automatically divides the generated response into paragraphs for better readability. The number of sentences per paragraph can be adjusted in the code.
+
+2. **Remove Paragraphs**: Clicking this button removes the paragraph formatting from the user's input text, converting it into a continuous block of text. This can be useful when providing a long input text without paragraph breaks.
+
+3. **Copy Last Response**: Clicking this button copies the last generated response from the bot to the user's input textbox. This allows the user to easily continue the conversation based on the bot's previous response or use it as a starting point for a new query.
+
+These functions provide additional convenience and flexibility for interacting with the Hebrew-Mistral-7B model through the GUI.
+
+```
+git pull
+```
+
+
+#### update: now the GUI write text in RTL mode:
 ```
 git pull
 ```
