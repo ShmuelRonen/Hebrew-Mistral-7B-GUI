@@ -5,3 +5,4 @@ sentencepiece
 protobuf
 bitsandbytes
 accelerate
+nltk
