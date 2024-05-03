@@ -39,7 +39,7 @@ git pull
 
 1. Clone the repository:
 ```
-git clone https://github.com/your-username/Hebrew-Mistral-7B-GUI.git
+git clone https://github.com/ShmuelRonen/Hebrew-Mistral-7B-GUI.git
 cd Hebrew-Mistral-7B-GUI
 ```
 ```
@@ -51,7 +51,7 @@ The script will automatically set up the virtual environment and install the req
 
 1. Clone the repository:
 ```
-git clone https://github.com/your-username/Hebrew-Mistral-7B-GUI.git
+git clone https://github.com/ShmuelRonen/Hebrew-Mistral-7B-GUI.git
 cd Hebrew-Mistral-7B-GUI
 Copy code
 3. Create and activate a virtual environment:
